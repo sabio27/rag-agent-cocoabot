@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.10"
 dependencies = [
     "chromadb>=1.5.9",
+    "fonttools>=4.65.0",
     "ollama>=0.6.3",
     "pypdf>=6.21.3",
 ]
