@@ -12,6 +12,7 @@ dependencies = [
     "fonttools>=4.65.0",
     "ollama>=0.6.3",
     "pypdf>=6.21.3",
+    "rank-bm25>=0.2.2",
 ]
 
 [project.scripts]

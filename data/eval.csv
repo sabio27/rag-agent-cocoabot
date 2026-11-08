@@ -1,0 +1,22 @@
+id,type,question,reponse_attendue,sources
+q01,factuel,Depuis quand la Côte d'Ivoire est-elle devenue premier producteur mondial du cacao?,Au début des années 1970,bm_au_pays_du_cacao_2019.pdf:30
+q02,factuel,Quel est le taux de transformation du cacao en Côte d'Ivoire ?,"un tiers de sa production de fèves",bm_au_pays_du_cacao_2019.pdf:48
+q03,multilingue,Quelle part du prix final du chocolat revient en moyenne aux producteurs de cacao ?,Environ 11 %,basic_fao_value_chain_summary_2020.pdf:5
+q04,multilingue,Quels facteurs expliquent les différences de répartition de la valeur entre pays producteurs de cacao ?,"La régulation et l'implication de l'État, les variétés de cacao cultivées, l'évolution des prix mondiaux",basic_fao_value_chain_summary_2020.pdf:8
+q05,multilingue,Quel était le prix moyen du cacao sur le marché de Londres en mars 2025 ?,"Environ 8 100 dollars la tonne",icco_market_report_2025_03.pdf:2
+q06,factuel,Quels sont les objectifs de l'accord de partenariat économique entre la Côte d'Ivoire et le Royaume Uni?,"Préserver les acquis de l'APE intérimaire UE/Côte d'Ivoire après le Brexit",tresor_remuneration_producteurs_drd.pdf:5
+q07,multilingue,Comment l'étude NORC définit-elle le travail des enfants ?,"Travail sous l'âge minimum, dépassement des heures autorisées pour les 12-17 ans, ou travail dangereux",norc_child_labor_2020.pdf:52
+q08,factuel,Quel est le prix bord champ du cacao en Côte d'Ivoire pour la campagne 2018-19 ?,750 FCFA/kg,bm_au_pays_du_cacao_2019.pdf:32
+q09,multilingue,Quel pourcentage des enfants des ménages cacaoyers ivoiriens était en travail des enfants en 2018/19 ?,38 %,norc_child_labor_2020.pdf:31;33;69;89
+q10,hors_corpus,Quel est le prix du café robusta en 2024 ?,Hors corpus,
+q11,factuel,Quelle proportion des producteurs enquêtés par INADES est analphabète ?,"41,5 %",inades_couts_production_ci.pdf:24
+q12,factuel,Quel est le coût d'une journée de travail agricole en 2025 selon l'étude INADES ?,entre 3500 FCFA et 5000 FCFA,inades_couts_production_ci.pdf:29;30
+q13,hors_corpus,Comment les planteurs exportent leur production d'hévéa?,Hors corpus,
+q14,factuel,Comment la déforestation contribue t-elle à la crise climatique mondiale?,elle entraîne une hausse des émissions de gaz à effet de serre en raison des incendies de forêt associés,eudr_reglement_2023_1115_fr.pdf:1
+q15,factuel,Quel est le montant du Différentiel de revenu décent imposé par la Côte d'Ivoire et le Ghana ?,400 dollars par tonne,cirad_covid_drd_2022.pdf:1;;tresor_remuneration_producteurs_drd.pdf:2
+q16,factuel,Après quelle date une parcelle déforestée ne peut plus fournir de cacao vendu dans l'Union européenne ?,Le 31 décembre 2020,eudr_reglement_2023_1115_fr.pdf:8;cocoa_barometer_2025.pdf:153;eudr_factsheet_ci_2023.pdf:2;jrc_eudr_impact_cocoa_2025.pdf:9 
+q17,factuel,Combien de tonnes de cacao la Côte d'Ivoire produit-elle selon la note du Trésor français ?,"Environ 2,1 millions de tonnes",tresor_remuneration_producteurs_drd.pdf:1
+q18,factuel,Qu'est-ce qu'un propriétaire agricole selon fairtrade?,"un ménage d'agriculteur qui possède des terres, mais les « met en métayage » de ces terres à un autre ménage d'agriculteur pour qu'elles soient cultivées dans le cadre d'un accord de métayage",fairtrade_revenu_menages_2025.pdf:10
+q19,factuel,Quel est le revenu agricole moyen des métayers selon l'étude Fairtrade en Côte d'Ivoire ?,"953 dollars par an",fairtrade_revenu_menages_2025.pdf:2;40;41
+q20,hors_corpus,Comment fabrique-t-on du beurre de karité ?,Hors corpus,
+q21,hors_corpus,Qui a gagné la Coupe du monde de football 2022 ?,Hors corpus,
