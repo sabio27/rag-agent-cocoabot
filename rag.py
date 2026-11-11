@@ -12,7 +12,7 @@ NB_PASSAGES = 5 # le "k" du top-k : nombre de chunks envoyés au LLM
 AFFICHER_PASSAGES = True # si True, on affiche les passages envoyés au LLM
 
 FICHIER_CHUNKS = "data/chunks.jsonl"  # les mêmes chunks que ceux indexés dans Chroma
-MODE_RECHERCHE = "hybride"  # "semantique" (v0) ou "hybride" (v1) : on peut revenir en arrière en changeant un mot
+MODE_RECHERCHE = "hybride_bilingue"  # "semantique" (v0), "hybride" (v1) ou "hybride_bilingue" (v1b)
 NB_CANDIDATS = 20   # nombre de candidats demandés à CHAQUE méthode avant la fusion
 K_RRF = 60   # constante standard de la fusion RRF
 
@@ -60,12 +60,30 @@ def fusion_rrf(*classements, k=K_RRF):
             scores[id_chunk] = scores.get(id_chunk, 0) + 1 / (k + rang)  # .get(..., 0) : 0 si le chunk n'a pas encore de score
     return sorted(scores.items(), key=lambda paire: paire[1], reverse=True)
 
+def traduire_en_anglais(question):
+    """Traduit la question en anglais avec le LLM, pour que BM25 trouve aussi les documents anglais."""
+    rep = ollama.chat(
+        model=MODELE_LLM,
+        messages=[{"role": "user", "content": f"Traduis cette question en anglais. Réponds uniquement par la traduction, sans commentaire.\n\n{question}"}],
+        options={"temperature": 0},
+    )
+    return rep["message"]["content"].strip()            # strip retire les espaces et retours à la ligne autour
+
 def rechercher(question, k=NB_PASSAGES):
     """Renvoie les k meilleurs passages, selon le mode de recherche choisi."""
     if MODE_RECHERCHE == "semantique":
         classement = fusion_rrf(recherche_semantique(question, k))  # un seul classement : l'ordre ne change pas
-    else:
+    elif MODE_RECHERCHE == "hybride":
         classement = fusion_rrf(recherche_semantique(question, NB_CANDIDATS), recherche_bm25(question, NB_CANDIDATS))
+    else: # "hybride_bilingue"
+        question_en = traduire_en_anglais(question)
+        classement = fusion_rrf(
+            recherche_semantique(question, NB_CANDIDATS), # le sens (toutes langues)
+            recherche_bm25(question, NB_CANDIDATS),  # les mots-clés en français
+            recherche_bm25(question_en, NB_CANDIDATS),  # les mots-clés en anglais
+        )
+            
+        
     return [
         {"texte": CHUNKS_PAR_ID[id_chunk]["texte"], "meta": CHUNKS_PAR_ID[id_chunk], "score": score}
         for id_chunk, score in classement[:k]          # on garde les k premiers
