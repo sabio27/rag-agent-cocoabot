@@ -2,11 +2,13 @@ import csv                                   # pour lire eval.csv et écrire les
 from datetime import datetime                # pour dater le fichier de résultats
 from pathlib import Path
 import ollama
-from rag import repondre, MODELE_LLM         # on réutilise le pipeline de rag.py : on évalue EXACTEMENT le même bot
+from rag import repondre        # on réutilise le pipeline de rag.py : on évalue EXACTEMENT le même bot
 
 FICHIER_EVAL = Path("data/eval.csv")
 DOSSIER_RESULTATS = Path("resultats")        # chaque évaluation y sera enregistrée, pour comparer les versions
 PHRASE_REFUS = "je ne trouve pas cette information"  # la phrase de refus imposée par le prompt de rag.py (en minuscules)
+MODELE_JUGE = "qwen2.5:7b"  # le juge reste FIXE pour que les scores restent comparables entre versions
+
 
 PROMPT_JUGE = """Tu es un correcteur rigoureux. Compare la réponse d'un assistant à la réponse attendue.
 
@@ -30,7 +32,7 @@ Réponds par un seul mot : CORRECTE, PARTIELLE ou INCORRECTE."""
 def juger(question, attendue, obtenue):
     """Demande au LLM juge si la réponse obtenue correspond à la réponse attendue."""
     prompt = PROMPT_JUGE.format(question=question, attendue=attendue, obtenue=obtenue)  # remplit les emplacements
-    rep = ollama.chat(model=MODELE_LLM, messages=[{"role": "user", "content": prompt}], options={"temperature": 0})
+    rep = ollama.chat(model=MODELE_JUGE, messages=[{"role": "user", "content": prompt}], options={"temperature": 0})
     texte = rep["message"]["content"].upper()  # en majuscules, pour comparer sans se soucier de la casse
     for verdict in ("INCORRECTE", "PARTIELLE", "CORRECTE"):  # INCORRECTE en premier : le mot "CORRECTE" est contenu dans "INCORRECTE" !
         if verdict in texte:

@@ -7,7 +7,7 @@ from rank_bm25 import BM25Okapi  # l'implémentation de BM25
 DOSSIER_CHROMA = "data/chroma"  # dossier ou chroma enregistre la base sur le disque
 NOM_COLLECTION = "cacao"
 MODELE_EMBEDDING = "bge-m3" # Doit etre le meme que dans indexation.py
-MODELE_LLM = "qwen2.5:7b" # le modele qui redige la reponse
+MODELE_LLM = "qwen2.5:14b" # le modele qui redige la reponse
 NB_PASSAGES = 5 # le "k" du top-k : nombre de chunks envoyés au LLM
 AFFICHER_PASSAGES = True # si True, on affiche les passages envoyés au LLM
 
