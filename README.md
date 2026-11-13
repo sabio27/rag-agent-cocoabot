@@ -39,6 +39,3 @@ uv run python agent.py             # agent (ou rag.py pour la version sans agent
 uv run python evaluation.py        # évaluation
 ```
 
-## Limites
-
-Les tableaux et graphiques des PDF sont extraits sans leur structure, ce qui provoque encore des erreurs sur certaines questions chiffrées. Le modèle local suit imparfaitement les consignes, et une question peut prendre plusieurs minutes sur processeur. Les prochaines étapes sont l'évaluation complète de l'agent, une meilleure extraction des tableaux et la migration vers LangGraph.
