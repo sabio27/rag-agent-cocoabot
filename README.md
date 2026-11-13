@@ -1,53 +1,44 @@
 # CacaoBot — RAG hybride et agent IA sur la filière cacao
 
-Assistant qui répond en français à des questions sur la filière cacao, à partir de 14 rapports en français et en anglais (Banque mondiale, ICCO, NORC, Fairtrade, règlement européen RDUE…), en citant ses sources (organisme, année, page).
+CacaoBot répond à des questions sur la filière cacao à partir de 14 rapports en français et en anglais (Banque mondiale, ICCO, NORC, Fairtrade, règlement européen sur la déforestation…). Chaque réponse cite l'organisme, l'année et la page de sa source. Quand l'information n'est pas dans les documents, l'assistant le signale au lieu d'inventer une réponse.
+
+Le projet combine un RAG hybride, un agent à outils et une évaluation automatique. Il fonctionne entièrement en local, avec des modèles open source.
 
 ## Fonctionnalités
 
-- **RAG hybride bilingue** : recherche sémantique (`bge-m3`, ChromaDB) + BM25 en français et en anglais, fusion par Reciprocal Rank Fusion.
-- **Agent à outils** (boucle *tool calling* codée sans framework) : décide s'il faut chercher et combien de fois, découpe les questions composées, délègue les calculs à une calculatrice sécurisée (`ast`, sans exécution de code). Garde-fous : itérations limitées, détection des appels répétés.
-- **Évaluation automatique** : recall@5, MRR, exactitude par un juge LLM, refus des questions hors corpus.
+**Recherche hybride bilingue.** La recherche sémantique (embeddings `bge-m3`, ChromaDB) comprend les reformulations mais manque les sigles et les noms exacts. Elle est donc combinée à une recherche par mots-clés (BM25), lancée sur la question en français et sur sa traduction anglaise afin de retrouver aussi les rapports en anglais. Les classements sont fusionnés par Reciprocal Rank Fusion.
+
+**Agent à outils.** Au lieu de chercher une seule fois, le modèle choisit ses outils : plusieurs recherches pour une question qui compare deux sources, ou une calculatrice plutôt qu'un calcul de tête. La boucle est implémentée sans framework, avec une limite d'itérations et une détection des appels répétés. La calculatrice analyse l'expression sans l'exécuter comme du code.
+
+**Évaluation automatique.** Un script pose 21 questions dont les réponses ont été vérifiées dans les rapports. Il mesure séparément la recherche (le bon passage figure-t-il parmi les 5 récupérés ?) et la réponse (est-elle juste ?), ce qui permet d'identifier l'origine de chaque erreur.
 
 ## Résultats
 
-21 questions annotées et vérifiées dans les sources (12 factuelles, 5 multilingues FR→EN, 4 hors corpus).
-
 | Version | Recherche | Recall@5 | MRR | Exactitude* |
 |---|---|---|---|---|
-| v0 | Sémantique seule | 82 % | 0,70 | 76 % |
-| v1 | + BM25 | 82 % | 0,68 | 76 % |
-| **v1b** | + BM25 bilingue | **94 %** | **0,80** | **82 %** |
+| Base | Sémantique seule | 82 % | 0,70 | 76 % |
+| v1 | Sémantique + BM25 | 82 % | 0,68 | 76 % |
+| **v1b** | Sémantique + BM25 français et anglais | **94 %** | **0,80** | **82 %** |
 
-\* Juge LLM local, qui surestime d'environ 8 points selon une vérification manuelle. Les 4 questions hors corpus sont refusées dans toutes les versions.
+\* Évaluée par un LLM correcteur, qui surestime d'environ 8 points d'après une vérification manuelle. Les questions hors sujet sont refusées dans toutes les versions.
 
-Deux pistes ont été testées puis rejetées après mesure : un prompt plus strict (−8 points d'exactitude) et un modèle deux fois plus gros (gain non significatif, temps doublé). Détails dans [`JOURNAL.md`](JOURNAL.md).
-
-## Fichiers
-
-| Fichier | Rôle |
-|---|---|
-| `chunking.py` | Découpage des PDF par page, retrait des en-têtes et de la bibliographie |
-| `indexation.py` | Embeddings et indexation dans ChromaDB |
-| `rag.py` | Pipeline RAG |
-| `agent.py` | Agent à outils |
-| `evaluation.py` | Évaluation sur `data/eval.csv` |
+Deux autres pistes, un prompt plus strict et un modèle deux fois plus gros, n'ont pas amélioré les résultats et ont été abandonnées. Le détail de ces essais figure dans le [journal de bord](JOURNAL.md).
 
 ## Installation
 
-Prérequis : Python 3.12, [uv](https://docs.astral.sh/uv/), [Ollama](https://ollama.com).
+Prérequis : Python 3.12, [uv](https://docs.astral.sh/uv/) et [Ollama](https://ollama.com).
 
 ```bash
 ollama pull qwen2.5:7b
 ollama pull bge-m3
 uv sync
-uv run python download_corpus.py   # les PDF ne sont pas versionnés ; liste et URL dans data/sources.csv
-uv run python chunking.py
-uv run python indexation.py
-uv run python agent.py             # ou rag.py, evaluation.py
+uv run python download_corpus.py   # les PDF ne sont pas versionnés ; la liste figure dans data/sources.csv
+uv run python chunking.py          # découpage des rapports
+uv run python indexation.py        # calcul des embeddings (environ 30 minutes sur processeur)
+uv run python agent.py             # agent (ou rag.py pour la version sans agent)
+uv run python evaluation.py        # évaluation
 ```
 
-## Limites et suite
+## Limites
 
-- Tableaux et graphiques des PDF extraits « à plat » : erreurs sur certaines questions chiffrées.
-- Le modèle local (7B) suit imparfaitement les consignes ; jeu d'évaluation encore petit.
-- Prochaines étapes : évaluation de l'agent, migration vers LangGraph, modèle via API.
+Les tableaux et graphiques des PDF sont extraits sans leur structure, ce qui provoque encore des erreurs sur certaines questions chiffrées. Le modèle local suit imparfaitement les consignes, et une question peut prendre plusieurs minutes sur processeur. Les prochaines étapes sont l'évaluation complète de l'agent, une meilleure extraction des tableaux et la migration vers LangGraph.
